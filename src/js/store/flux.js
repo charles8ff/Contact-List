@@ -1,79 +1,69 @@
-const getState = ({ getStore, getActions, setStore }) => {
+const getState = ({ getStore, setStore }) => {
 	return {
 		store: {
-			contacts: []
+			contact: [],
+			currentUser: ""
 		},
 		actions: {
-			setContact: contact => {
-				setStore({ contact: contact });
+			cleanUser: () => {
+				setStore({ currentUser: "" });
 			},
-
-			getSingleContact: async id => {
-				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + id);
-				response = await response.json();
-				getActions().setContact(response);
-			},
-
-			getAllContacts: async () => {
+			getContacts: async () => {
 				let response = await fetch(
-					"https://assets.breatheco.de/apis/fake/contact/agenda/charles8ffhasnorealfriends"
+					"https://assets.breatheco.de/apis/fake/contact/agenda/charles8ffhasnorealfriends",
+					{
+						method: "GET",
+						headers: new Headers({
+							"Content-Type": "application/json"
+						})
+					}
 				);
 				response = await response.json();
-				setStore({ contacts: response });
+				setStore({ contact: response });
 			},
-
-			createContact: async data => {
+			deleteSelectedContact: async item => {
+				setStore({ contact: getStore().contact.filter(index => index !== item) });
+				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + item.id, {
+					method: "DELETE",
+					headers: new Headers({
+						"Content-Type": "application/json"
+					})
+				});
+				response = await response.json();
+			},
+			editContact: async (item, user) => {
+				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + user, {
+					method: "PUT",
+					headers: new Headers({
+						"Content-Type": "application/json"
+					}),
+					body: JSON.stringify({
+						full_name: item.name,
+						email: item.email,
+						agenda_slug: "charles8ffhasnorealfriends",
+						address: item.address,
+						phone: item.phone
+					})
+				});
+				response = await response.json();
+			},
+			addNewContact: async user => {
+				let found = getStore().contact.find(item => item == user);
+				if (!found) setStore({ contact: [...getStore().contact, user] });
 				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/", {
 					method: "POST",
-					mode: "cors",
-					redirect: "follow",
 					headers: new Headers({
 						"Content-Type": "application/json"
 					}),
 					body: JSON.stringify({
-						name: data.name,
-						email: data.email,
+						full_name: user.name,
+						email: user.email,
 						agenda_slug: "charles8ffhasnorealfriends",
-						address: data.address,
-						phone: data.phone
+						address: user.address,
+						phone: user.phone
 					})
 				});
 				response = await response.json();
-				getActions().getAllContacts();
-			},
-
-			deleteContact: async id => {
-				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + id, {
-					method: "DELETE",
-					mode: "cors",
-					redirect: "follow",
-					headers: new Headers({
-						"Content-Type": "application/json"
-					})
-				});
-				response = await response.json();
-				getActions().getAllContacts();
-			},
-
-			updateContact: async (id, field) => {
-				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + id, {
-					method: "PUT",
-					mode: "cors",
-					redirect: "follow",
-					headers: new Headers({
-						"Content-Type": "application/json"
-					}),
-					body: JSON.stringify({
-						name: field.name,
-						email: field.email,
-						agenda_slug: "charles8ffhasnorealfriends",
-						address: field.address,
-						phone: field.phone
-					})
-				});
-				response = await response.json();
-				getActions().getAllContacts();
-				getActions().setContact("");
 			}
 		}
 	};

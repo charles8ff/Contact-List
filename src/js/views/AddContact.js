@@ -1,21 +1,23 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export const AddContact = () => {
+export const AddContact = props => {
 	const { actions, store } = useContext(Context);
-
-	const [field, setField] = useState({
-		name: "",
-		email: "",
-		phone: "",
-		address: ""
+	const [state, setState] = useState({
+		showModal: false
 	});
 
-	const fillField = event => {
-		setField({ ...field, [event.target.name]: event.target.value });
+	const [data, setData] = useState({
+		email: "",
+		phone: "",
+		name: "",
+		address: ""
+	});
+	const inputChange = event => {
+		setData({ ...data, [event.target.name]: event.target.value });
 	};
-
 	return (
 		<div className="container">
 			<div>
@@ -24,58 +26,67 @@ export const AddContact = () => {
 					<div className="form-group">
 						<label>Full Name</label>
 						<input
+							className="form-control "
+							name="name"
+							onChange={inputChange}
 							type="text"
-							className="form-control"
 							placeholder="Full Name"
-							onChange={fillField}
-							defaultValue={store.user ? store.user.name : ""}
 						/>
 					</div>
 					<div className="form-group">
 						<label>Email</label>
 						<input
-							type="email"
-							className="form-control"
-							placeholder="Enter email"
-							onChange={fillField}
-							defaultValue={store.user ? store.user.email : ""}
+							className="form-control "
+							name="email"
+							onChange={inputChange}
+							type="text"
+							placeholder="Email"
 						/>
 					</div>
 					<div className="form-group">
 						<label>Phone</label>
 						<input
-							type="phone"
-							className="form-control"
-							placeholder="Enter phone"
-							onChange={fillField}
-							defaultValue={store.user ? store.user.phone : ""}
+							className="form-control "
+							name="phone"
+							onChange={inputChange}
+							type="number"
+							placeholder="Phone"
 						/>
 					</div>
 					<div className="form-group">
 						<label>Address</label>
 						<input
+							className="form-control "
+							name="address"
+							onChange={inputChange}
 							type="text"
-							className="form-control"
-							placeholder="Enter address"
-							onChange={fillField}
-							defaultValue={store.user ? store.user.address : ""}
+							placeholder="Address"
 						/>
 					</div>
-					<button
-						type="button"
-						className="btn btn-primary form-control"
-						onClick={() => {
-							store.contact
-								? actions.updateContact(store.contact.id, field)
-								: actions.createContact(field);
-						}}>
-						save
-					</button>
+					<Link to="/">
+						<button
+							onClick={() => {
+								if (store.currentUser) {
+									actions.editContact(data, store.currentUser);
+									actions.getContacts();
+									actions.cleanUser();
+								} else {
+									actions.cleanUser();
+								}
+							}}
+							className="btn btn-block btn-success">
+							Add Contact
+						</button>
+					</Link>
 					<Link className="mt-3 w-100 text-center" to="/">
-						or get back to contacts
+						0r get back to contacts
 					</Link>
 				</form>
 			</div>
 		</div>
 	);
+};
+
+AddContact.propTypes = {
+	id: PropTypes.string
 };

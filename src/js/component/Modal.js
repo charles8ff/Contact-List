@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
+import { Context } from "../store/appContext.js";
+import { Link } from "react-router-dom";
 
 export const Modal = props => {
-	const [state, setState] = useState({
-		//initialize state here
-	});
+	const { store, actions } = useContext(Context);
+
 	return (
 		<div className="modal" tabIndex="-1" role="dialog" style={{ display: props.show ? "inline-block" : "none" }}>
 			<div className="modal-dialog" role="document">
@@ -29,26 +30,16 @@ export const Modal = props => {
 						<p>Warning: unknown consequences after this point... Kidding!</p>
 					</div>
 					<div className="modal-footer">
-						{props.onClose ? (
-							<button
-								onClick={() => props.onClose()}
-								type="button"
-								className="btn btn-primary"
-								data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-								Oh no!
-							</button>
-						) : (
-							""
-						)}
+						<button type="button" className="btn btn-primary">
+							Oh no!
+						</button>
 						<button
 							type="button"
 							className="btn btn-secondary"
 							data-dismiss="modal"
 							onClick={() => {
-								handleClose;
-								actions.deleteContact(props.id);
+								actions.deleteSelectedContact(props.id);
+								props.onClose();
 							}}>
 							Do it!
 						</button>
@@ -66,7 +57,7 @@ Modal.propTypes = {
 	history: PropTypes.object,
 	onClose: PropTypes.func,
 	show: PropTypes.bool,
-	id: PropTypes.number
+	id: PropTypes.object
 };
 
 /**
