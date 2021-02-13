@@ -29,10 +29,27 @@ export const Modal = props => {
 						<p>Warning: unknown consequences after this point... Kidding!</p>
 					</div>
 					<div className="modal-footer">
-						<button type="button" className="btn btn-primary">
-							Oh no!
-						</button>
-						<button type="button" className="btn btn-secondary" data-dismiss="modal">
+						{props.onClose ? (
+							<button
+								onClick={() => props.onClose()}
+								type="button"
+								className="btn btn-primary"
+								data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+								Oh no!
+							</button>
+						) : (
+							""
+						)}
+						<button
+							type="button"
+							className="btn btn-secondary"
+							data-dismiss="modal"
+							onClick={() => {
+								handleClose;
+								actions.deleteContact(props.id);
+							}}>
 							Do it!
 						</button>
 					</div>
@@ -48,7 +65,8 @@ export const Modal = props => {
 Modal.propTypes = {
 	history: PropTypes.object,
 	onClose: PropTypes.func,
-	show: PropTypes.bool
+	show: PropTypes.bool,
+	id: PropTypes.number
 };
 
 /**
