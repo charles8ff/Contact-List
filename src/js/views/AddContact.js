@@ -71,7 +71,7 @@ export const AddContact = props => {
 									actions.getContacts();
 									actions.cleanUser();
 								} else {
-									actions.cleanUser();
+									actions.addNewContact(data);
 								}
 							}}
 							className="btn btn-block btn-success">
