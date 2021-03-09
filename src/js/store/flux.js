@@ -48,6 +48,7 @@ const getState = ({ getStore, setStore }) => {
 				response = await response.json();
 			},
 			addNewContact: async user => {
+				let found = getStore().contact.find(item => item == user);
 				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/", {
 					method: "POST",
 					headers: new Headers({
@@ -62,7 +63,7 @@ const getState = ({ getStore, setStore }) => {
 					})
 				});
 				response = await response.json();
-				let found = getStore().contact.find(item => item == user);
+
 				if (!found) setStore({ contact: [...getStore().contact, user] });
 			}
 		}
