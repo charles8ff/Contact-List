@@ -22,7 +22,6 @@ const getState = ({ getStore, setStore }) => {
 				setStore({ contact: response });
 			},
 			deleteSelectedContact: async item => {
-				setStore({ contact: getStore().contact.filter(index => index !== item) });
 				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + item.id, {
 					method: "DELETE",
 					headers: new Headers({
@@ -30,6 +29,7 @@ const getState = ({ getStore, setStore }) => {
 					})
 				});
 				response = await response.json();
+				setStore({ contact: getStore().contact.filter(index => index !== item) });
 			},
 			editContact: async (item, user) => {
 				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/" + user, {
@@ -48,8 +48,6 @@ const getState = ({ getStore, setStore }) => {
 				response = await response.json();
 			},
 			addNewContact: async user => {
-				let found = getStore().contact.find(item => item == user);
-				if (!found) setStore({ contact: [...getStore().contact, user] });
 				let response = await fetch("https://assets.breatheco.de/apis/fake/contact/", {
 					method: "POST",
 					headers: new Headers({
@@ -64,6 +62,8 @@ const getState = ({ getStore, setStore }) => {
 					})
 				});
 				response = await response.json();
+				let found = getStore().contact.find(item => item == user);
+				if (!found) setStore({ contact: [...getStore().contact, user] });
 			}
 		}
 	};
